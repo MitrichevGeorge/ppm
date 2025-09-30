@@ -1,17 +1,13 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /minecraft
 
-RUN apt-get update && apt-get install -y curl
+# Используем более новую версию Paper для оптимизации
+RUN wget -O paper.jar https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/196/downloads/paper-1.20.1-196.jar
 
-RUN curl -o paper.jar https://api.papermc.io/v2/projects/paper/versions/1.20.4/builds/445/downloads/paper-1.20.4-445.jar
-
-COPY server.properties ./
 COPY eula.txt ./
-COPY start.sh ./
-
-RUN chmod +x start.sh
 
 EXPOSE 25565
 
-CMD ["./start.sh"]
+# Минимальные настройки памяти
+CMD ["java", "-Xmx384M", "-Xms128M", "-jar", "paper.jar", "nogui"]
